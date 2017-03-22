@@ -29,7 +29,7 @@ Protected Class StuFinder
 		  
 		  dim parentFolder as folderItem = f.Parent
 		  
-		  while (installationDescription = "") and (parentFolder <> baseFolder)
+		  while (installationDescription = "") and (parentFolder <> nil) and (parentFolder <> baseFolder)
 		    
 		    dim folderName as String =parentFolder.name
 		    dim installationFolderPattern as String ="^(.*)\s-\s(\d\d\d\d)$"
@@ -37,18 +37,15 @@ Protected Class StuFinder
 		    dim InstallationName as String =  foldername.Replace(installationFolderPattern, "$1", TRUE)
 		    dim InstallationKP as String = folderName.Replace(installationFolderPattern, "$2", TRUE)
 		    
-		    if (InstallationName <>folderName) and (InstallationKP <> folderName) then
+		    if (InstallationName <> folderName) and (InstallationKP <> folderName) then
 		      installationDescription = installationKP.pad(6,"0")+" "+InstallationName
+		    else
+		      parentFolder=parentFolder.parent
 		    end if
 		    
-		    parentFolder=parentFolder.parent
 		  wend
 		  
-		  if (parentFolder <> baseFolder) then
-		    return installationDescription
-		  else
-		    return ""
-		  end if
+		  return installationDescription
 		End Function
 	#tag EndMethod
 
