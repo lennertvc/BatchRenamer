@@ -62,15 +62,17 @@ Protected Class StuFinder
 		    for i as Integer=1 to currentDirectory.Count
 		      dim currentItem as FolderItem = currentDirectory.Item(i)
 		      
-		      if currentItem.Directory then
+		      if not currentItem.Alias
 		        
-		        subDirectoriesToSearch.Append(currentItem)
-		        
-		      else
-		        
-		        if Right(currentItem.name, 4) = ".stu"  then
-		          RenameSingleSTU(currentItem)
-		          renamedCounter = renamedCounter+1
+		         if currentItem.Directory then
+		          subDirectoriesToSearch.Append(currentItem)
+		        else
+		          
+		          if Right(currentItem.name, 4) = ".stu"  then
+		            RenameSingleSTU(currentItem)
+		            renamedCounter = renamedCounter+1
+		          end if
+		          
 		        end if
 		        
 		      end if
