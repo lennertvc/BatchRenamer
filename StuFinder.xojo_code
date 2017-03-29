@@ -1,5 +1,13 @@
 #tag Class
 Protected Class StuFinder
+Inherits thread
+	#tag Event
+		Sub Run()
+		  renameAllSTUs
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub constructor()
 		  renamedCounter = 0
@@ -38,7 +46,7 @@ Protected Class StuFinder
 		    dim InstallationKP as String = folderName.Replace(installationFolderPattern, "$2", TRUE)
 		    
 		    if (InstallationName <> folderName) and (InstallationKP <> folderName) then
-		      installationDescription = installationKP.pad(6,"0")+" "+InstallationName
+		      installationDescription = "1"+installationKP.pad(5,"0")+" "+InstallationName
 		    else
 		      parentFolder=parentFolder.parent
 		    end if
@@ -60,17 +68,16 @@ Protected Class StuFinder
 		    dim currentDirectory as folderItem = subDirectoriesToSearch(0)
 		    
 		    for i as Integer=1 to currentDirectory.Count
-		      dim currentItem as FolderItem = currentDirectory.Item(i)
+		      dim currentItem as FolderItem = currentDirectory.TrueItem(i)
 		      
-		      if not currentItem.Alias
+		      if not currentItem.Alias then
 		        
-		         if currentItem.Directory then
+		        if currentItem.Directory then
 		          subDirectoriesToSearch.Append(currentItem)
 		        else
 		          
 		          if Right(currentItem.name, 4) = ".stu"  then
 		            RenameSingleSTU(currentItem)
-		            renamedCounter = renamedCounter+1
 		          end if
 		          
 		        end if
@@ -89,20 +96,31 @@ Protected Class StuFinder
 	#tag Method, Flags = &h0
 		Sub renameSingleSTU(f as FolderItem)
 		  dim oldName as String = f.Name
+		  dim oldPath as String = f.NativePath
 		  dim installationDescription as String = findInstallationDescription(f)
 		  
 		  if installationDescription <> "" then
 		    
-		    dim PLCNumber as String = oldName.Replace(".*PLC[ -]?(\d)+.*", "$1",TRUE)
-		    // dim programName as String = oldName.replace(".stu", "")
-		    // programName = programName.replace(PLCNumber, "")
+		    dim PLCName as String = "PLC01"
+		    
+		    // Try to find existing PLC-number
+		    dim PLCNumber as String = oldName.Replace(".*PLC[ -_]?(\d)+.*", "$1",TRUE)
+		    if PLCNumber<> oldName then
+		      PLCName = "PLC"+PLCNumber.pad(2,"0")
+		    else
+		      system.DebugLog("PLC number : "+ PLCNumber)
+		    end if
 		    
 		    // Do the actual renaming
-		    f.Name = installationDescription+" "+"PLC"+PLCNumber.pad(2,"0")+".stu"
+		    dim newName as String =  installationDescription+", "+PLCName+".stu"
+		    f.Name = newName
+		    renamedCounter = renamedCounter+1
+		    system.DebugLog("File "+oldPath+" werd herbenoemd naar "+newName)
 		    
 		  else
-		    system.DebugLog("File "+oldName+" kon niet worden herbenoemd")
+		    system.DebugLog("File "+oldPath+" kon niet worden herbenoemd")
 		  end if
+		  
 		End Sub
 	#tag EndMethod
 
@@ -140,19 +158,21 @@ Protected Class StuFinder
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Priority"
+			Visible=true
+			Group="Behavior"
+			InitialValue="5"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="renamedCounter"
@@ -160,17 +180,18 @@ Protected Class StuFinder
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="StackSize"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="String"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

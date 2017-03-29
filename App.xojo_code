@@ -31,11 +31,6 @@ Inherits Application
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="stuFinder"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

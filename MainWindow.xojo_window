@@ -56,6 +56,27 @@ Begin Window MainWindow
       Underline       =   False
       Visible         =   True
       Width           =   121
+      Begin ProgressWheel ProgressWheel1
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PushButtonRename"
+         Left            =   92
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   0
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Top             =   31
+         Visible         =   False
+         Width           =   16
+      End
    End
    Begin Label countLabel
       AutoDeactivate  =   True
@@ -79,6 +100,7 @@ Begin Window MainWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -91,11 +113,11 @@ Begin Window MainWindow
       Visible         =   True
       Width           =   75
    End
-   Begin Timer UpdateUITimer
+   Begin Timer TimerUpdateUI
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
-      Period          =   500
+      Period          =   1000
       Scope           =   0
       TabPanelIndex   =   0
    End
@@ -109,17 +131,18 @@ End
 	#tag Event
 		Sub Action()
 		  app.stuFinder.selectBaseFolder
-		  app.stuFinder.RenameAllSTUs
+		  app.stuFinder.run
 		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events UpdateUITimer
+#tag Events TimerUpdateUI
 	#tag Event
 		Sub Action()
 		  if app.stuFinder.renamedCounter > 0 then
-		    countLabel.Text = str(app.stuFinder.renamedCounter)
+		    MainWindow.countLabel.Text = str(app.stuFinder.renamedCounter)
 		  end if
+		  ProgressWheel1.Visible=App.stuFinder.State = (Thread.Running)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
